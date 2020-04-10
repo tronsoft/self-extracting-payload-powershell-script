@@ -20,17 +20,12 @@
 
 param ([string]$Path)
 
-Write-Host 'Extracting payload'
+Write-Host "Extracting payload from '$PSCommandPath'"
 
-$content = Get-Content $PSCommandPath
-
-$totalLines = ($content | Measure-Object -Line).Lines
-$lineNumber = ($content | Select-String -Pattern "^#--content--").LineNumber
-$tail = $totalLines - $lineNumber
-
-$base64string = Get-Content $PSCommandPath -tail $tail 
-[Convert]::FromBase64String($base64string)  | Set-Content -NoNewLine $PayloadPath -Encoding Byte
+$base64string = Get-Content $PSCommandPath -tail 1 
+[Convert]::FromBase64String($base64string)  | Set-Content -NoNewLine $Path -Encoding Byte
 
 Write-Host 'Extracted payload'
 
 exit 0
+#--content--
